@@ -33,7 +33,6 @@ public class JoltGettingStartedJava {
         System.out.println(output);
         System.out.println(output instanceof Map);
 
-
     }
 
 }
