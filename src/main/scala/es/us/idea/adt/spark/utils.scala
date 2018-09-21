@@ -1,4 +1,4 @@
-package es.us.idea.adt
+package es.us.idea.adt.spark
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
@@ -6,7 +6,7 @@ import org.apache.spark.sql.types.{ArrayType, DataType, StructField, StructType}
 
 import scala.collection.mutable
 
-object RowUtils {
+object utils {
   def fromRowToMap(row: Row, dsSchema: Option[StructType] = None):Map[String, Any] = {
     if(dsSchema.isDefined) format(dsSchema.get, new GenericRowWithSchema(row.toSeq.toArray, dsSchema.get) ) else format(row.schema, row)
   }
@@ -31,5 +31,4 @@ object RowUtils {
       case _ => array
     }
   }
-
 }

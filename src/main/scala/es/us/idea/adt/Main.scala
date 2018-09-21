@@ -43,28 +43,10 @@ object Main {
       ))
     )
 
+    import es.us.idea.adt.spark.implicits._
+
     val ds = spark.read.json(s"/home/alvaro/datasets/hidrocantabrico_split.json")
-    //val ds = spark.read.json(s"/home/alvaro/datasets/prueba_arrays.json")
-    //    .withColumn("out", explode(array(dataMappingUdf(struct($"consumo")))))
-
-    // val ds2 = ProtoADT.protoADT(ds,
-    //   new DataStructure(
-    //     new NamedField("C",
-    //       new IterableField("consumo",
-    //         new DataSequence(
-    //           new BasicField("potencias.p1"),
-    //           new BasicField("potencias.p2"),
-    //           new BasicField("potencias.p3"))
-    //       )
-    //     )
-    //   )
-    // )
-
-    val ds2 = ProtoADT.protoADT(ds,
-      //new DataStructure(
-      //  new NamedField("consumoFormateado", new IterableField("consumo", new DataStructure(new NamedField("pot1", new BasicField("potencias.p1")), new NamedField("pot2", new BasicField("potencias.p2")), new NamedField("pot3", new BasicField("potencias.p3")), new NamedField("all", new BasicField("potencias")))))
-      //)
-      new DataStructure(
+      .adt(
         new NamedField(
           "consumoMinFormat",
           new IterableField(
@@ -83,12 +65,23 @@ object Main {
               )
             )
           )
-        )
-      )
-    )
+        ),
+        new NamedField(
+          "tariff",
+          new BasicField("tarifa")
+        ),
+        new NamedField("consumoFormateado", new IterableField("consumo", new DataStructure(new NamedField("pot1", new BasicField("potencias.p1")), new NamedField("pot2", new BasicField("potencias.p2")), new NamedField("pot3", new BasicField("potencias.p3")), new NamedField("all", new BasicField("potencias"))))),
+        new NamedField("C_max", new IterableField("consumo", new DataSequence(
+          new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p1"), new BasicField("potencias.p4")), functions.max), DataTypes.IntegerType),
+          new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p2"), new BasicField("potencias.p5")), functions.max), DataTypes.IntegerType),
+          new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p3"), new BasicField("potencias.p6")), functions.max), DataTypes.IntegerType)
+        )))
 
-    ds2.show(false)
-    ds2.printSchema()
+      )
+
+    ds.explain(true)
+    ds.show(false)
+    ds.printSchema()
 
     //ds
     //  .t(shift from "consumo.*.p1" to "C.[&1].[0]", shift from "consumo.*.p1" to "C.[&1].[1]")

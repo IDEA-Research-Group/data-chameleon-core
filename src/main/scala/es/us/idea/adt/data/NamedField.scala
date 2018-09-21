@@ -13,4 +13,5 @@ class NamedField(name: String, data: Data) extends Data {
       case _ => throw new Exception()
     }
   }
+  def getName = name
 }
