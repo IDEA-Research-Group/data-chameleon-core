@@ -1,5 +1,7 @@
 package es.us.idea.adt
 
+import es.us.idea.adt.dsl.Composite2
+import es.us.idea.adt.dsl.Composite2._
 import org.apache.spark.sql.execution.command.DDLUtils
 import org.apache.spark.sql.{Row, SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
@@ -45,10 +47,51 @@ object Main {
 
     val ds = spark.read.json(s"/home/alvaro/datasets/hidrocantabrico_split.json")
     //val ds = spark.read.json(s"/home/alvaro/datasets/prueba_arrays.json")
-        .withColumn("out", explode(array(dataMappingUdf(struct($"consumo")))))
+    //    .withColumn("out", explode(array(dataMappingUdf(struct($"consumo")))))
 
-    ds.show(false)
-    ds.printSchema()
+    // val ds2 = ProtoADT.protoADT(ds,
+    //   new DataStructure(
+    //     new NamedField("C",
+    //       new IterableField("consumo",
+    //         new DataSequence(
+    //           new BasicField("potencias.p1"),
+    //           new BasicField("potencias.p2"),
+    //           new BasicField("potencias.p3"))
+    //       )
+    //     )
+    //   )
+    // )
+
+    val ds2 = ProtoADT.protoADT(ds,
+      //new DataStructure(
+      //  new NamedField("consumoFormateado", new IterableField("consumo", new DataStructure(new NamedField("pot1", new BasicField("potencias.p1")), new NamedField("pot2", new BasicField("potencias.p2")), new NamedField("pot3", new BasicField("potencias.p3")), new NamedField("all", new BasicField("potencias")))))
+      //)
+      new DataStructure(
+        new NamedField(
+          "consumoMinFormat",
+          new IterableField(
+            "consumo",
+            new DataStructure(
+              new NamedField("minPot",
+                new TypedData(
+                  new StructureModifier(
+                    new DataSequence(
+                      new BasicField("potencias.p1"),
+                      new BasicField("potencias.p2"),
+                      new BasicField("potencias.p3")
+                    ), Composite2.min
+                  ), DataTypes.IntegerType
+                )
+              )
+            )
+          )
+        )
+      )
+
+    )
+
+    ds2.show(false)
+    ds2.printSchema()
 
     //ds
     //  .t(shift from "consumo.*.p1" to "C.[&1].[0]", shift from "consumo.*.p1" to "C.[&1].[1]")

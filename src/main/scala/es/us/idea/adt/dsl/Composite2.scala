@@ -3,6 +3,8 @@ package es.us.idea.adt.dsl
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
+import scala.util.Try
+
 object Composite2 {
 
   val schemaJson = "{\"type\":\"struct\",\"fields\":[{\"name\":\"DH\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"ICPInstalado\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"consumo\",\"type\":{\"type\":\"array\",\"elementType\":{\"type\":\"struct\",\"fields\":[{\"name\":\"anio\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"diasFacturacion\",\"type\":\"long\",\"nullable\":true,\"metadata\":{}},{\"name\":\"fechaFinLectura\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"fechaInicioLectura\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"potencias\",\"type\":{\"type\":\"struct\",\"fields\":[{\"name\":\"p1\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p2\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p3\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p4\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p5\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p6\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}}]},\"nullable\":true,\"metadata\":{}}]},\"containsNull\":true},\"nullable\":true,\"metadata\":{}},{\"name\":\"cups\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"derechosAcceso\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"derechosExtension\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"distribuidora\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"fechaAltaSuministro\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"fechaLimiteDerechosExtension\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"fechaUltimaLectura\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"fechaUltimoCambioComercial\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"fechaUltimoMovimientoContrato\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"impagos\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"importeGarantia\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"potMaxActa\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"potMaxBie\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"potenciaContratada\",\"type\":{\"type\":\"struct\",\"fields\":[{\"name\":\"p1\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p2\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p3\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p4\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p5\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p6\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}}]},\"nullable\":true,\"metadata\":{}},{\"name\":\"precioTarifa\",\"type\":{\"type\":\"struct\",\"fields\":[{\"name\":\"p1\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p2\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"p3\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}}]},\"nullable\":true,\"metadata\":{}},{\"name\":\"propiedadEqMedidaTitular\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"propiedadICPTitular\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"tarifa\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"tension\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"tipoFrontera\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"tipoPerfil\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"titularTipoPersona\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"titularViviendaHabitual\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"totalFacturaActual\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"ubicacionCodigoPostal\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"ubicacionPoblacion\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"ubicacionProvincia\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}}]}"
@@ -31,18 +33,72 @@ object Composite2 {
     "fechaUltimaLectura" -> "02/02/2016", "potMaxActa" -> 32.91)
 
 
-  trait ADTType // Para TypedData
+  //trait ADTType // Para TypedData
 
-  trait ADTSchema {
-    //override def equals(obj: scala.Any): Boolean = {
-    //  println("bbb")
-    //  //super.equals(obj)
-    //  true
-    //}
+  //val anyToOptDouble = (a: Any) => {
+  //  a match {
+  //    case Some(d: Double) => Some(d)
+  //    case Some(i: Int) => Some(i.toDouble)
+  //    case Some(f: Float) => Some(f.toDouble)
+  //    case Some(l: Long) => Some(l.toDouble)
+  //    case Some(s: String) => Try(s.toDouble).toOption // FIXME code smell
+  //    case _ => None
+  //  }
+  //}
 
-    //override def hashCode(): Int = {
-    //  31
-    //}
+  implicit class SequencesAndOptions(seq: Seq[Any]) {
+
+    def applyOperationOpt(f: (Double, Double) => Double, initialValue: Option[Double]=None): Option[Double] = {
+      initialValue match {
+        case None => seq.map(asDouble).reduceLeft((x, y) => x.flatMap(_x => y.map(_y => f(_x, _y))))
+        case _ => seq.foldLeft(initialValue){ case (acc, el) => asDouble(el).flatMap(value => acc.map(ac => f(ac, value)))}
+      }
+    }
+
+    def sumOpt()(implicit ev: Numeric[Double])= {
+      applyOperationOpt(ev.plus, Some(ev.zero))
+    }
+
+    def maxOpt()(implicit ev: Numeric[Double]) = {
+      applyOperationOpt(ev.max)
+    }
+
+    def minOpt()(implicit ev: Numeric[Double]) = {
+      applyOperationOpt(ev.min)
+    }
+
+  }
+
+  /**
+    * Type conversions
+    * */
+  def asDouble(value: Any): Option[Double] = {
+    val f =
+      (a: Any) =>
+        a match {
+        case s: String => Try(s.toDouble).toOption
+        case i: Int => Some(i.toDouble)
+        case l: Long => Some(l.toDouble)
+        case f: Float => Some(f.toDouble)
+        case d: Double => Some(d)
+        case _ => None
+      }
+
+    value match {
+      case Some(a: Any) => f(a)
+      case _ => f(value)
+    }
+
+  }
+
+  def asInt(value: Any): Option[Int] = asDouble(value).map(a => a.toInt)
+
+  def asString(value: Any): Option[String] = Some(value.toString)
+
+  def asLong(value: Any): Option[Long] = asDouble(value).map(a => a.toLong)
+
+
+  trait ADTSchema extends Serializable {
   }
 
   class ADTStructField(structField: StructField) extends ADTSchema {
@@ -74,7 +130,6 @@ object Composite2 {
       }
     }
 
-
     override def hashCode(): Int = {
       41 * (41 + dataType.hashCode())
     }
@@ -82,7 +137,7 @@ object Composite2 {
   }
 
 
-  trait Data {
+  trait Data extends Serializable {
     def getValue(in: Any): Any
     def getSchema(schm: ADTSchema): ADTSchema
   }
@@ -103,12 +158,6 @@ object Composite2 {
         case adtStructField: ADTStructField => new ADTDataType(adtStructField.get.dataType)
         case _ => resSchm
       }
-
-      //schm match {
-      //  case adtStructField: ADTStructField => new ADTDataType(ADTDSL.recursiveGetSchemaFromPath(path.split('.'), adtStructField.get).dataType)
-      //  // todo definir el otro caso
-      //  case _ => throw new Exception
-      //}
     }
   }
 
@@ -131,9 +180,18 @@ object Composite2 {
   }
 
   class TypedData(data: Data, dataType: DataType) extends Data {
-    override def getValue(in: Any): Any = ???
+    override def getValue(in: Any): Any = {
+      val value = data.getValue(in)
+      dataType match {
+        case _: DoubleType =>  println("double"); asDouble(value)
+        case _: IntegerType => println("integer"); asInt(value)
+        case _: StringType =>  println("string"); asString(value)
+        case _: LongType =>    println("long"); asLong(value)
+        case _ => None
+      }
+    }
 
-    override def getSchema(schm: ADTSchema): ADTSchema = ???
+    override def getSchema(schm: ADTSchema): ADTSchema = new ADTDataType(dataType)
   }
 
   class IterableField(path: String, dataUnion: DataUnion) extends Data {
@@ -198,9 +256,7 @@ object Composite2 {
   class DataStructure(data: Data*) extends DataUnion(data: _*) {
     // TODO OJO 2 en el getValue hay que examinar todos los posibles campos anidados, a fin de transformar los Maps en Rows
 
-    override def getValue(in: Any): Any = {
-      Row.apply(data.map(d => ADTDSL.findAndReplaceMaps(d.getValue(in))  ): _*)
-    }
+    override def getValue(in: Any): Any = Row.apply(data.map(d => ADTDSL.findAndReplaceMaps(d.getValue(in))  ): _*)
 
     override def getSchema(schm: ADTSchema): ADTSchema = {
       new ADTDataType(
@@ -215,6 +271,54 @@ object Composite2 {
     }
   }
 
+  class StructureModifier(data: DataUnion, operation: (Seq[Any] => Any, DataType) ) extends Data {
+    override def getValue(in: Any): Any = {
+      data.getValue(in) match {
+        case seq: Seq[Any] => operation._1(seq)
+        case row: Row => operation._1(row.toSeq)
+        case _ => None
+      }
+    }
+
+    override def getSchema(schm: ADTSchema): ADTSchema = {
+      new ADTDataType(operation._2)
+    }
+  }
+
+  val max = ((seq: Seq[Any]) => {
+    seq.maxOpt()
+  }, DataTypes.DoubleType)
+
+  val min = ((seq: Seq[Any]) => {
+    seq.minOpt()
+  }, DataTypes.DoubleType)
+
+  val sum = ((seq: Seq[Any]) => {
+    seq.sumOpt()
+  }, DataTypes.DoubleType)
+
+
+//  class ShapeOf(shape: Data, data: Data) extends Data {
+//    override def getValue(in: Any): Any = {
+//      val shapeVal = shape.getValue(in)
+//
+//
+//
+//      shapeVal match {
+//
+//        case s: Seq[Any] => s.map(x => getValue(x))
+//        case m => Map[String, Any]
+//
+//      }
+//
+//    }
+//
+//    override def getSchema(schm: ADTSchema): ADTSchema = {
+//      shape.getSchema(schm)
+//    }
+//  }
+
+
   def main(args: Array[String]): Unit = {
     val f = new BasicField("tarifa")
     val nf = new NamedField("tariff", new BasicField("tarifa"))
@@ -227,9 +331,31 @@ object Composite2 {
     val datastrf = new DataStructure(new NamedField("pot1", new BasicField("potenciaContratada.p1")), new NamedField("pot2", new BasicField("potenciaContratada.p2")), new NamedField("pot3", new BasicField("potenciaContratada.p3")))
     val iterdatastrf = new NamedField("consumoFormateado", new IterableField("consumo", new DataStructure(new NamedField("pot1", new BasicField("potencias.p1")), new NamedField("pot2", new BasicField("potencias.p2")), new NamedField("pot3", new BasicField("potencias.p3")), new NamedField("all", new BasicField("potencias")))))
 
-    val generatedSchema = iterdatastrf.getSchema(new ADTStructField(DataTypes.createStructField("root", schema, true)))
+    val maxnf = new NamedField("max_pot_contratada", new StructureModifier(new DataSequence(new BasicField("potenciaContratada.p1"), new BasicField("potenciaContratada.p2"), new BasicField("potenciaContratada.p3")), max))
 
-    println(iterdatastrf.getValue(inTipo))
+    val typedmin = new NamedField(
+      "consumoMinFormat",
+      new IterableField(
+        "consumo",
+        new DataStructure(
+          new NamedField("minPot",
+            new TypedData(
+              new StructureModifier(
+                new DataSequence(
+                  new BasicField("potencias.p1"),
+                  new BasicField("potencias.p2"),
+                  new BasicField("potencias.p3")
+                ), min
+              ), DataTypes.IntegerType
+            )
+          )
+        )
+      )
+    )
+
+    val generatedSchema = typedmin.getSchema(new ADTStructField(DataTypes.createStructField("root", schema, true)))
+
+    println(typedmin.getValue(inTipo))
 
     generatedSchema match {
       case adtStructField: ADTStructField => println(adtStructField.get)
