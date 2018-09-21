@@ -1,6 +1,7 @@
 package es.us.idea.adt
 
-import es.us.idea.adt.dsl.Composite2.{ADTDataType, ADTStructField, Data}
+import es.us.idea.adt.data.Data
+import es.us.idea.adt.data.schema.{ADTDataType, ADTStructField}
 import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.sql.functions.udf
 import org.apache.spark.sql.functions._
@@ -39,7 +40,6 @@ object ProtoADT {
     )
 
     df.withColumn("adt_out", explode(array(dataMappingUdf(struct(df.columns.map(df.col(_)): _*)))))
-    //df.withColumn("adt_out", dataMappingUdf(df.columns.map(df.col(_)): _*))
 
   }
 

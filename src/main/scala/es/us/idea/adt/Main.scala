@@ -1,12 +1,10 @@
 package es.us.idea.adt
 
-import es.us.idea.adt.dsl.Composite2
-import es.us.idea.adt.dsl.Composite2._
-import org.apache.spark.sql.execution.command.DDLUtils
+import es.us.idea.adt.data._
 import org.apache.spark.sql.{Row, SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.DataTypes
-
+import functions._
 
 object Main {
   def main(args: Array[String]) = {
@@ -79,7 +77,7 @@ object Main {
                       new BasicField("potencias.p1"),
                       new BasicField("potencias.p2"),
                       new BasicField("potencias.p3")
-                    ), Composite2.min
+                    ), functions.min
                   ), DataTypes.IntegerType
                 )
               )
@@ -87,7 +85,6 @@ object Main {
           )
         )
       )
-
     )
 
     ds2.show(false)
