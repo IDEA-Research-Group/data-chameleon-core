@@ -31,4 +31,16 @@ object utils {
       case _ => array
     }
   }
+
+  def findMinSetOfPaths(inPaths: Seq[String]) = {
+
+    val inPathsSplit = inPaths.filter(_.nonEmpty).map(_.split('.'))
+
+    inPathsSplit.map(s => {
+      if(s.length > 0) s.head
+      else s.mkString(".")
+    }).distinct
+
+  }
+
 }

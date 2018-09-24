@@ -8,6 +8,11 @@ import org.apache.spark.sql.types.StructField
   * @param structField the wrapped StructField object from the SparkSQL library
   */
 class ADTStructField(structField: StructField) extends ADTSchema {
+
+  /** Return the wrapped object
+    *
+    * @return the wrapped DataType object
+    */
   def get = structField
 
 

@@ -17,4 +17,6 @@ class TypedData(data: Data, dataType: DataType) extends Data {
   }
 
   override def getSchema(schm: ADTSchema): ADTSchema = new ADTDataType(dataType)
+
+  override def getFirstLevelPath(): Seq[String] = data.getFirstLevelPath()
 }

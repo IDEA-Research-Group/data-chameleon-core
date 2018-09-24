@@ -37,4 +37,6 @@ class IterableField(path: String, dataUnion: DataUnion) extends Data {
       }
     }
   }
+
+  override def getFirstLevelPath(): Seq[String] = Seq(path)
 }

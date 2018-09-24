@@ -7,4 +7,6 @@ class Default(value: Any, dataType: DataType) extends Data {
   override def getValue(in: Any): Any = value
 
   override def getSchema(schm: ADTSchema): ADTSchema = new ADTDataType(dataType)
+
+  override def getFirstLevelPath(): Seq[String] = Seq("")
 }

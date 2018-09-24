@@ -14,4 +14,6 @@ class NamedField(name: String, data: Data) extends Data {
     }
   }
   def getName = name
+
+  override def getFirstLevelPath(): Seq[String] = data.getFirstLevelPath()
 }

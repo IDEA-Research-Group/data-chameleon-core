@@ -22,4 +22,10 @@ trait Data extends Serializable {
     * @return the resulting schema
     */
   def getSchema(schema: ADTSchema): ADTSchema
+
+  /**
+    *
+    * @return the first level path that points at this Data
+    */
+  def getFirstLevelPath(): Seq[String]
 }

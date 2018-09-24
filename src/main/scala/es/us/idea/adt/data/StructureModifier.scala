@@ -16,4 +16,6 @@ class StructureModifier(data: DataUnion, operation: (Seq[Any] => Any, DataType) 
   override def getSchema(schm: ADTSchema): ADTSchema = {
     new ADTDataType(operation._2)
   }
+
+  override def getFirstLevelPath(): Seq[String] = data.getFirstLevelPath()
 }

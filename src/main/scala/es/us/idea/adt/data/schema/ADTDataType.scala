@@ -7,6 +7,11 @@ import org.apache.spark.sql.types.DataType
   * @param dataType the wrapped DataType object from the SparkSQL library
   */
 class ADTDataType(dataType: DataType) extends ADTSchema {
+
+  /** Return the wrapped object
+    *
+    * @return the wrapped DataType object
+    */
   def get = dataType
 
   override def equals(that: Any): Boolean = {
