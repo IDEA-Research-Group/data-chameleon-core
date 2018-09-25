@@ -24,4 +24,7 @@ class ADTDataType(dataType: DataType) extends ADTSchema {
   override def hashCode(): Int = {
     41 * (41 + dataType.hashCode())
   }
+
+  override def toString: String = dataType.toString
+
 }

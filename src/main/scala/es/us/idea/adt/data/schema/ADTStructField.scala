@@ -26,4 +26,6 @@ class ADTStructField(structField: StructField) extends ADTSchema {
   override def hashCode(): Int = {
     41 * (41 + structField.hashCode())
   }
+
+  override def toString: String = structField.toString
 }
