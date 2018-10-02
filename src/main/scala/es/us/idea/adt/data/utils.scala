@@ -103,6 +103,10 @@ object utils {
       applyOperationOpt(ev.min)
     }
 
+    def avgOpt()(implicit ev: Numeric[Double]) = {
+      sumOpt().map(_/seq.length)
+    }
+
   }
 
   /**

@@ -6,11 +6,18 @@ import org.apache.spark.sql.types.DataType
 
 class StructureModifier(data: DataUnion, operation: (Seq[Any] => Any, DataType) ) extends Data {
   override def getValue(in: Any): Any = {
-    data.getValue(in) match {
+
+    val processIn = (a: Any) => a match {
       case seq: Seq[Any] => operation._1(seq)
       case row: Row => operation._1(row.toSeq)
-      case _ => None
+      case x => None
     }
+
+    data.getValue(in) match {
+      case Some(x) => processIn(x)
+      case other => processIn(other)
+    }
+
   }
 
   override def getSchema(schm: ADTSchema): ADTSchema = {

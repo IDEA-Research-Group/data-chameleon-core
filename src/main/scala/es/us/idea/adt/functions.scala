@@ -16,4 +16,8 @@ object functions {
   val sum = ((seq: Seq[Any]) => {
     seq.sumOpt()
   }, DataTypes.DoubleType)
+
+  val avg = ((seq: Seq[Any]) => {
+    seq.avgOpt()
+  }, DataTypes.DoubleType)
 }

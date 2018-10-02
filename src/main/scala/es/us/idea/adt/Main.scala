@@ -72,9 +72,22 @@ object Main {
           new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p1"), new BasicField("potencias.p4")), functions.max), DataTypes.IntegerType),
           new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p2"), new BasicField("potencias.p5")), functions.max), DataTypes.IntegerType),
           new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p3"), new BasicField("potencias.p6")), functions.max), DataTypes.IntegerType)
-        )))
+        ))),
+        new NamedField("avgConsumedPot",
+          new DataSequence(
+            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p1")), functions.avg),
+            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p2")), functions.avg),
+            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p3")), functions.avg),
+            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p4")), functions.avg),
+            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p5")), functions.avg),
+            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p6")), functions.avg)
+          )
+        ),
+        new NamedField("billingDays",
+          new IterableField("consumo", new BasicField("diasFacturacion"))
+        )
       )
-        //.select("PC_max")
+
     ds.show(false)
     ds.printSchema()
 

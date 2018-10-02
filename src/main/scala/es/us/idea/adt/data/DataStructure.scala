@@ -30,7 +30,7 @@ class DataStructure(data: Data*) extends DataUnion(data: _*) {
         data.zipWithIndex.map(t => t._1.getSchema(schema) match {
           case adtStructField: ADTStructField => adtStructField.get
           case adtDataType: ADTDataType => DataTypes.createStructField(t._2.toString, adtDataType.get, true)
-          case _ => throw new UnsupportedDataStructureException("Unexpected data structure ")
+          case _ => throw new UnsupportedDataStructureException(s"Unexpected schema structure for a DataStructure object: $schema")
         }).toArray
       )
     )
