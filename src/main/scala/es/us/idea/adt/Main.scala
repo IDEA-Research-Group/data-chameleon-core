@@ -19,73 +19,33 @@ object Main {
     import spark.implicits._
     import es.us.idea.adt.spark.implicits._
 
+    import  es.us.idea.adt.dsl.implicits._
+
+
     val ds = spark.read.json(s"/home/alvaro/datasets/hidrocantabrico_split.json")
-      //.select("tarifa", "potenciaContratada", "consumo")
       .adt(
-        new NamedField(
-          "consumoMinFormat",
-          new IterableField(
-            "consumo",
-            new DataStructure(
-              new NamedField("minPot",
-                new TypedData(
-                  new StructureModifier(
-                    new DataSequence(
-                      new BasicField("potencias.p1"),
-                      new BasicField("potencias.p2"),
-                      new BasicField("potencias.p3")
-                    ), functions.min
-                  ), DataTypes.IntegerType
-                )
-              )
-            )
-          )
+        d"consumoMinFormat" < "consumo" &+ d"minPot" < min("potencias.p1", "potencias.p2", "potencias.p3"),
+        d"tariff" < "tarifa",
+        d"PC_MAX" * (max("potenciaContratada.p1", "potenciaContratada.p4"), max("potenciaContratada.p2", "potenciaContratada.p5"), max("potenciaContratada.p3", "potenciaContratada.p4")),
+        d"consumoFormateado" < "consumo" &+ (
+          d"pot1" < "potencias.p1",
+          d"pot2" < "potencias.p2",
+          d"pot3" < "potencias.p3",
+          d"pot4" < "potencias.p4",
+          d"pot5" < "potencias.p5",
+          d"pot6" < "potencias.p6"
         ),
-        new NamedField(
-          "tariff",
-          new BasicField("tarifa")
+        d"C_MAX" < "consumo" &* (
+          max("potencias.p1", "potencias.p4"),
+          max("potencias.p2", "potencias.p5"),
+          max("potencias.p3", "potencias.p6")
         ),
-        new NamedField("PC_max",
-          new DataSequence(
-            new StructureModifier(
-              new DataSequence(
-                new BasicField("potenciaContratada.p1"),
-                new BasicField("potenciaContratada.p4")
-              ), functions.max
-            ),
-            new StructureModifier(
-              new DataSequence(
-                new BasicField("potenciaContratada.p2"),
-                new BasicField("potenciaContratada.p5")
-              ), functions.max
-            ),
-            new StructureModifier(
-              new DataSequence(
-                new BasicField("potenciaContratada.p3"),
-                new BasicField("potenciaContratada.p6")
-              ), functions.max
-            )
-          )
+        d"avgConsumoPot" + (
+          d"p1" < avg("consumo" & max("potencias.p1", "potencias.p4")),
+          d"p2" < avg("consumo" & max("potencias.p2", "potencias.p5")),
+          d"p3" < avg("consumo" & max("potencias.p3", "potencias.p6"))
         ),
-        new NamedField("consumoFormateado", new IterableField("consumo", new DataStructure(new NamedField("pot1", new BasicField("potencias.p1")), new NamedField("pot2", new BasicField("potencias.p2")), new NamedField("pot3", new BasicField("potencias.p3")), new NamedField("all", new BasicField("potencias"))))),
-        new NamedField("C_max", new IterableField("consumo", new DataSequence(
-          new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p1"), new BasicField("potencias.p4")), functions.max), DataTypes.IntegerType),
-          new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p2"), new BasicField("potencias.p5")), functions.max), DataTypes.IntegerType),
-          new TypedData(new StructureModifier(new DataSequence(new BasicField("potencias.p3"), new BasicField("potencias.p6")), functions.max), DataTypes.IntegerType)
-        ))),
-        new NamedField("avgConsumedPot",
-          new DataSequence(
-            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p1")), functions.avg),
-            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p2")), functions.avg),
-            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p3")), functions.avg),
-            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p4")), functions.avg),
-            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p5")), functions.avg),
-            new StructureModifier(new IterableField("consumo", new BasicField("potencias.p6")), functions.avg)
-          )
-        ),
-        new NamedField("billingDays",
-          new IterableField("consumo", new BasicField("diasFacturacion"))
-        )
+        d"billingDays" < "consumo" & "diasFacturacion"
       )
 
     ds.show(false)
