@@ -4,7 +4,6 @@ import es.us.idea.adt.data._
 import org.apache.spark.sql.{Row, SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.DataTypes
-import functions._
 
 object Main {
   def main(args: Array[String]) = {
@@ -34,7 +33,8 @@ object Main {
         d"avgConsumoPot" + (
           (1 to 3).map(i => d(s"p$i") < (avg("consumo" & max(s"potencias.p$i", s"potencias.p${i+3}")) / times(10000) / asInt)) : _*
         ),
-        d"billingDays" < "consumo" & "diasFacturacion"
+        d"billingDays" < "consumo" & "diasFacturacion",
+        d"consumoDate" < "consumo" & ("fechaFinLectura" / asDate("dd/MM/yyyy"))
       )
 
     ds.show(false)
