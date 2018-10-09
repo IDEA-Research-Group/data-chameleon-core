@@ -10,6 +10,8 @@ object implicits {
     }
   }
 
+  def d(str: String) = DestinationContainer(str)
+
   implicit def strToContainer(str: String): BasicFieldContainer = new BasicFieldContainer(str)
 
   case class DestinationContainer(name: String) {
