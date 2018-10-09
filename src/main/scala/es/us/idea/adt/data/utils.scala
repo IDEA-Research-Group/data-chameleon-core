@@ -2,7 +2,7 @@ package es.us.idea.adt.data
 
 import es.us.idea.adt.data.schema.{ADTDataType, ADTSchema, ADTStructField}
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{DataType, StructType}
+import org.apache.spark.sql.types.{DataType, DataTypes, StructType}
 
 import scala.util.Try
 
@@ -86,8 +86,8 @@ object utils {
 
     def applyOperationOpt(f: (Double, Double) => Double, initialValue: Option[Double]=None): Option[Double] = {
       initialValue match {
-        case None => seq.map(asDouble).reduceLeft((x, y) => x.flatMap(_x => y.map(_y => f(_x, _y))))
-        case _ => seq.foldLeft(initialValue){ case (acc, el) => asDouble(el).flatMap(value => acc.map(ac => f(ac, value)))}
+        case None => seq.map(TypeConversions.asDouble).reduceLeft((x, y) => x.flatMap(_x => y.map(_y => f(_x, _y))))
+        case _ => seq.foldLeft(initialValue){ case (acc, el) => TypeConversions.asDouble(el).flatMap(value => acc.map(ac => f(ac, value)))}
       }
     }
 
@@ -112,29 +112,78 @@ object utils {
   /**
     * Type conversions
     * */
-  def asDouble(value: Any): Option[Double] = {
-    val f =
-      (a: Any) =>
-        a match {
-          case s: String => Try(s.toDouble).toOption
-          case i: Int => Some(i.toDouble)
-          case l: Long => Some(l.toDouble)
-          case f: Float => Some(f.toDouble)
-          case d: Double => Some(d)
-          case _ => None
-        }
+  object TypeConversions {
 
-    value match {
-      case Some(a: Any) => f(a)
-      case _ => f(value)
+    def asDouble(value: Any): Option[Double] = {
+      val f =
+        (a: Any) =>
+          a match {
+            case s: String => Try(s.toDouble).toOption
+            case i: Int => Some(i.toDouble)
+            case l: Long => Some(l.toDouble)
+            case f: Float => Some(f.toDouble)
+            case d: Double => Some(d)
+            case _ => None
+          }
+
+      value match {
+        case Some(a: Any) => f(a)
+        case _ => f(value)
+      }
+
     }
+
+    def asInt(value: Any): Option[Int] = asDouble(value).map(a => a.toInt)
+
+    def asString(value: Any): Option[String] = Some(value.toString)
+
+    def asLong(value: Any): Option[Long] = asDouble(value).map(a => a.toLong)
 
   }
 
-  def asInt(value: Any): Option[Int] = asDouble(value).map(a => a.toInt)
+  object Transformations{
 
-  def asString(value: Any): Option[String] = Some(value.toString)
+    def times(value: Any, literal: Either[Int, Double]) = {
 
-  def asLong(value: Any): Option[Long] = asDouble(value).map(a => a.toLong)
+      val f =
+        (a: Any) =>
+          a match {
+            case s: String =>
+              literal match {
+                case Left(i) => Try((s.toDouble * i).toString).toOption
+                case Right(d) => Try((s.toDouble * d).toString).toOption
+              }
+            case int: Int =>
+              literal match {
+                case Left(i) => Some(int * i)
+                case Right(d) => Some(int * d)
+              }
+            case l: Long =>
+              literal match {
+                case Left(i) => Some(l * i)
+                case Right(d) => Some(l * d)
+              }
+            case f: Float =>
+              literal match {
+                case Left(i) => Some((f * i).toDouble)
+                case Right(d) => Some(f * d)
+              }
+            case double: Double =>
+              literal match {
+                case Left(i) => Some(double * i)
+                case Left(d) => Some(double * d)
+              }
+            case _ => None
+          }
+
+      value match {
+        case Some(a: Any) => f(a)
+        case _ => f(value)
+      }
+    }
+
+
+
+  }
 
 }

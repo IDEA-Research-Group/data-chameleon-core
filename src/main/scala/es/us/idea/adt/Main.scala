@@ -18,7 +18,7 @@ object Main {
 
     import es.us.idea.adt.spark.implicits._
     import es.us.idea.adt.dsl.implicits._
-
+    import functions._
 
     val ds = spark.read.json(s"/home/alvaro/datasets/hidrocantabrico_split.json")
       .adt(
@@ -29,10 +29,10 @@ object Main {
           (1 to 6).map(i => d(s"pot$i") < s"potencias.p$i"): _*
         ),
         d"C_MAX" < "consumo" &* (
-          (1 to 6).map(i => max(s"potencias.p$i", s"potencias.p${i+3}")) : _*
+          (1 to 3).map(i => max(s"potencias.p$i", s"potencias.p${i+3}")) : _*
         ),
         d"avgConsumoPot" + (
-          (1 to 3).map(i => d(s"p$i") < avg("consumo" & max(s"potencias.p$i", s"potencias.p${i+3}"))) : _*
+          (1 to 3).map(i => d(s"p$i") < (avg("consumo" & max(s"potencias.p$i", s"potencias.p${i+3}")) / times(10000) / asInt)) : _*
         ),
         d"billingDays" < "consumo" & "diasFacturacion"
       )

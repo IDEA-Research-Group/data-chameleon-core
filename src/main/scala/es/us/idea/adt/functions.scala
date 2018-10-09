@@ -20,4 +20,18 @@ object functions {
   val avg = ((seq: Seq[Any]) => {
     seq.avgOpt()
   }, DataTypes.DoubleType)
+
+  val asDouble = ((value: Any) => TypeConversions.asDouble(value), Some(DataTypes.DoubleType))
+  val asInt = ((value: Any) => TypeConversions.asInt(value), Some(DataTypes.IntegerType))
+  val asString = ((value: Any) => TypeConversions.asString(value), Some(DataTypes.StringType))
+  val asLong = ((value: Any) => TypeConversions.asLong(value), Some(DataTypes.LongType))
+
+  def times(literal: Int) = ((value: Any) => {
+    Transformations.times(value, Left(literal))
+  }, None)
+
+  def times(literal: Double) = ((value: Any) => {
+    Transformations.times(value, Right(literal))
+  }, Some(DataTypes.DoubleType))
+
 }

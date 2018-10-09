@@ -2,7 +2,7 @@ package es.us.idea.adt.dsl
 
 import es.us.idea.adt.data.{BasicField, Data}
 
-class BasicFieldContainer(path: String) extends Container {
+class BasicFieldContainer(path: String) extends Container with Modifiable {
   def getPath() = path
   override def build(): Data = new BasicField(path)
 
