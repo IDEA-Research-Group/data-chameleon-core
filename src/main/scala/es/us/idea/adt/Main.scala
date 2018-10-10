@@ -1,9 +1,11 @@
 package es.us.idea.adt
 
 import es.us.idea.adt.data._
+import es.us.idea.adt.data.functions.ADTReductionFunction
 import org.apache.spark.sql.{Row, SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.DataTypes
+import org.joda.time.{Days, LocalDate}
 
 object Main {
   def main(args: Array[String]) = {
@@ -18,6 +20,16 @@ object Main {
     import es.us.idea.adt.spark.implicits._
     import es.us.idea.adt.dsl.implicits._
     import functions._
+
+    val daysBetweenDates = ADTReductionFunction((s: Seq[Some[java.sql.Date]]) => {
+      (s.headOption, s.lastOption) match {
+        case (Some(endOpt), Some(startOpt)) => (endOpt, startOpt) match {
+          case (Some(end), Some(start)) => Days.daysBetween(new LocalDate(start), new LocalDate(end)).getDays
+          case _ => None
+        }
+        case _ => None
+      }
+    } , DataTypes.IntegerType)
 
     val ds = spark.read.json(s"/home/alvaro/datasets/hidrocantabrico_split.json")
       .adt(
@@ -34,7 +46,8 @@ object Main {
           (1 to 3).map(i => d(s"p$i") < (avg("consumo" & max(s"potencias.p$i", s"potencias.p${i+3}")) / times(10000) / asInt)) : _*
         ),
         d"billingDays" < "consumo" & "diasFacturacion",
-        d"consumoDate" < "consumo" & ("fechaFinLectura" / asDate("dd/MM/yyyy"))
+        d"consumoDate" < "consumo" & ("fechaFinLectura" / asDate("dd/MM/yyyy")),
+        d"calculatedBillingDays" < "consumo" & reduce("fechaFinLectura" / asDate("dd/MM/yyyy"), "fechaInicioLectura" / asDate("dd/MM/yyyy"))(daysBetweenDates)
       )
 
     ds.show(false)

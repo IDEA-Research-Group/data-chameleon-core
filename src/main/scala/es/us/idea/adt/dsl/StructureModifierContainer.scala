@@ -1,9 +1,9 @@
 package es.us.idea.adt.dsl
 
+import es.us.idea.adt.data.functions.ADTReductionFunction
 import es.us.idea.adt.data.{Data, DataUnion, StructureModifier}
-import org.apache.spark.sql.types.DataType
 
-class StructureModifierContainer(dataUnionContainer: DataUnionContainer)(f: (Seq[Any] => Any, DataType)) extends Container with Modifiable {
+class StructureModifierContainer(dataUnionContainer: DataUnionContainer)(f: ADTReductionFunction) extends Container with Modifiable {
   override def build(): Data = {
     dataUnionContainer.build() match {
       case du: DataUnion => new StructureModifier(du, f)

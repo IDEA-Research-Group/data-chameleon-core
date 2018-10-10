@@ -1,15 +1,15 @@
 package es.us.idea.adt.data
 
+import es.us.idea.adt.data.functions.ADTReductionFunction
 import es.us.idea.adt.data.schema.{ADTDataType, ADTSchema}
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.DataType
 
-class StructureModifier(data: DataUnion, operation: (Seq[Any] => Any, DataType) ) extends Data {
+class StructureModifier(data: DataUnion, f: ADTReductionFunction) extends Data {
   override def getValue(in: Any): Any = {
 
     val processIn = (a: Any) => a match {
-      case seq: Seq[Any] => operation._1(seq)
-      case row: Row => operation._1(row.toSeq)
+      case seq: Seq[Any] => f.eval(seq)
+      case row: Row => f.eval(row.toSeq)
       case x => None
     }
 
@@ -21,7 +21,7 @@ class StructureModifier(data: DataUnion, operation: (Seq[Any] => Any, DataType) 
   }
 
   override def getSchema(schm: ADTSchema): ADTSchema = {
-    new ADTDataType(operation._2)
+    new ADTDataType(f.dataType)
   }
 
   override def getFirstLevelPath(): Seq[String] = data.getFirstLevelPath()

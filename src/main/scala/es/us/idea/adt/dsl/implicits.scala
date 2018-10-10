@@ -1,5 +1,6 @@
 package es.us.idea.adt.dsl
 
+import es.us.idea.adt.data.functions.ADTReductionFunction
 import es.us.idea.adt.functions
 
 object implicits {
@@ -20,16 +21,19 @@ object implicits {
     def +(namedFieldContainer: NamedFieldContainer*) = new NamedFieldContainer(name, new DataStructureContainer(namedFieldContainer: _*))
   }
 
-  def max(container: Container*): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(functions.reduce.max)
-  def max(iterableFieldContainer: IterableFieldContainer): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(functions.reduce.max)
+  def max(container: Container*): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(functions.reductionFunctions.max)
+  def max(iterableFieldContainer: IterableFieldContainer): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(functions.reductionFunctions.max)
 
-  def min(container: Container*): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(functions.reduce.min)
-  def min(iterableFieldContainer: IterableFieldContainer): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(functions.reduce.min)
+  def min(container: Container*): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(functions.reductionFunctions.min)
+  def min(iterableFieldContainer: IterableFieldContainer): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(functions.reductionFunctions.min)
 
-  def avg(container: Container*): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(functions.reduce.avg)
-  def avg(iterableFieldContainer: IterableFieldContainer): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(functions.reduce.avg)
+  def avg(container: Container*): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(functions.reductionFunctions.avg)
+  def avg(iterableFieldContainer: IterableFieldContainer): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(functions.reductionFunctions.avg)
 
-  def sum(container: Container*): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(functions.reduce.sum)
-  def sum(iterableFieldContainer: IterableFieldContainer): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(functions.reduce.sum)
+  def sum(container: Container*): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(functions.reductionFunctions.sum)
+  def sum(iterableFieldContainer: IterableFieldContainer): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(functions.reductionFunctions.sum)
+
+  def reduce(container: Container*)(adtReductionFunction: ADTReductionFunction): StructureModifierContainer = new StructureModifierContainer(new DataSequenceContainer(container: _*))(adtReductionFunction)
+  def reduce(iterableFieldContainer: IterableFieldContainer)(adtReductionFunction: ADTReductionFunction): StructureModifierContainer = new StructureModifierContainer(iterableFieldContainer)(adtReductionFunction)
 
 }

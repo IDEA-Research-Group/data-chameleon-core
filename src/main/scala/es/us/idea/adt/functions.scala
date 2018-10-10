@@ -2,7 +2,7 @@ package es.us.idea.adt
 
 import org.apache.spark.sql.types.{DataType, DataTypes}
 import data.utils._
-import es.us.idea.adt.data.functions.ADTDataFunction
+import es.us.idea.adt.data.functions.{ADTDataFunction, ADTReductionFunction}
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 
@@ -10,20 +10,20 @@ import scala.util.Try
 
 object functions {
 
-  object reduce {
-    val max = ((seq: Seq[Any]) => {
+  object reductionFunctions {
+    val max = ADTReductionFunction((seq: Seq[Any]) => {
       seq.maxOpt()
     }, DataTypes.DoubleType)
 
-    val min = ((seq: Seq[Any]) => {
+    val min = ADTReductionFunction((seq: Seq[Any]) => {
       seq.minOpt()
     }, DataTypes.DoubleType)
 
-    val sum = ((seq: Seq[Any]) => {
+    val sum = ADTReductionFunction((seq: Seq[Any]) => {
       seq.sumOpt()
     }, DataTypes.DoubleType)
 
-    val avg = ((seq: Seq[Any]) => {
+    val avg = ADTReductionFunction((seq: Seq[Any]) => {
       seq.avgOpt()
     }, DataTypes.DoubleType)
   }

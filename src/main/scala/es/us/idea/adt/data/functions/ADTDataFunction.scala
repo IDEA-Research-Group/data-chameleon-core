@@ -14,6 +14,7 @@ case class ADTDataFunction(f: AnyRef, dataType: Option[DataType]) {
     f match {
       case a: (() => Any) => a()
       case b: (Any => Any) => b(getRawValue(value))
+      case _ => throw new Exception("ADTDataFunction must receive a function with at most 1 argument") // TODO create custom exception
     }
   }
 
