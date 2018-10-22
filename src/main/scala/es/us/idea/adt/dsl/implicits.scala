@@ -18,6 +18,7 @@ object implicits {
   case class DestinationContainer(name: String) {
     def <(container: Container): NamedFieldContainer = new NamedFieldContainer(name, container)
     def *(container: Container*) = new NamedFieldContainer(name, new DataSequenceContainer(container: _*))
+    def *(iterableFieldContainer: IterableFieldContainer) = new NamedFieldContainer(name, iterableFieldContainer)
     def +(namedFieldContainer: NamedFieldContainer*) = new NamedFieldContainer(name, new DataStructureContainer(namedFieldContainer: _*))
   }
 

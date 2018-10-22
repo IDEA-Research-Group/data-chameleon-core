@@ -33,21 +33,21 @@ object Main {
 
     val ds = spark.read.json(s"/home/alvaro/datasets/hidrocantabrico_split.json")
       .adt(
-        d"consumoMinFormat" < "consumo" &+ d"minPot" < min("potencias.p1", "potencias.p2", "potencias.p3"),
+        d"consumoMinFormat" * ("consumo" &+ d"minPot" < min("potencias.p1", "potencias.p2", "potencias.p3")),
         d"tariff" < "tarifa",
         d"PC_MAX" * (max("potenciaContratada.p1", "potenciaContratada.p4"), max("potenciaContratada.p2", "potenciaContratada.p5"), max("potenciaContratada.p3", "potenciaContratada.p4")),
-        d"consumoFormateado" < "consumo" &+ (
+        d"consumoFormateado" * ("consumo" &+ (
           (1 to 6).map(i => d(s"pot$i") < s"potencias.p$i"): _*
-        ),
-        d"C_MAX" < "consumo" &* (
+        )),
+        d"C_MAX" * ("consumo" &* (
           (1 to 3).map(i => max(s"potencias.p$i", s"potencias.p${i+3}")) : _*
-        ),
+        )),
         d"avgConsumoPot" + (
           (1 to 3).map(i => d(s"p$i") < (avg("consumo" & max(s"potencias.p$i", s"potencias.p${i+3}")) / times(10000) / asInt)) : _*
         ),
-        d"billingDays" < "consumo" & "diasFacturacion",
-        d"consumoDate" < "consumo" & ("fechaFinLectura" / asDate("dd/MM/yyyy")),
-        d"calculatedBillingDays" < "consumo" & reduce("fechaFinLectura" / asDate("dd/MM/yyyy"), "fechaInicioLectura" / asDate("dd/MM/yyyy"))(daysBetweenDates)
+        d"billingDays" * ("consumo" & "diasFacturacion"),
+        d"consumoDate" * ("consumo" & ("fechaFinLectura" / asDate("dd/MM/yyyy"))),
+        d"calculatedBillingDays" * ("consumo" & reduce("fechaFinLectura" / asDate("dd/MM/yyyy"), "fechaInicioLectura" / asDate("dd/MM/yyyy"))(daysBetweenDates))
       )
 
     ds.show(false)
