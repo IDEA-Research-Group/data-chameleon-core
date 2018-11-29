@@ -7,9 +7,15 @@ import org.joda.time.{Days, LocalDate}
 
 object Main {
   def main(args: Array[String]) = {
+    args.headOption match {
+      case Some(s) => execute(s)
+      case _ => println("Error: No dataset path specified.")
+    }
+  }
 
+  def execute(datasetPath: String) = {
     val spark = SparkSession.builder()
-      .master("local[*]")
+      //.master("local[*]")
       .appName("Spark ADT")
       .getOrCreate()
 
@@ -36,7 +42,7 @@ object Main {
     } , DataTypes.IntegerType)
 
     // Read the Dataset and apply the Data Transformation Functions
-    val ds = spark.read.json("datasets/power_consumption.json")
+    val ds = spark.read.json(datasetPath)
       .adt(
         d"ID" < "customerID", //T1
         d"T" < "tariff" / translate, //T2
@@ -56,9 +62,10 @@ object Main {
       .select("ID", "T", "CP", "C", "AVG_C", "BD")
 
     // Show a preview of the Dataset and print its schema
-    ds.show(false)
+    ds.show()
     ds.printSchema()
 
     spark.close()
   }
+
 }
