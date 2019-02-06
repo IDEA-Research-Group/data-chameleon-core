@@ -7,15 +7,17 @@ import org.joda.time.{Days, LocalDate}
 
 object Main {
   def main(args: Array[String]) = {
-    args.headOption match {
-      case Some(s) => execute(s)
-      case _ => println("Error: No dataset path specified.")
-    }
+    //args.headOption match {
+    //  case Some(s) => execute(s)
+    //  case _ => println("Error: No dataset path specified.")
+    //}
   }
+
+  execute("datasets/power_consumption.json")
 
   def execute(datasetPath: String) = {
     val spark = SparkSession.builder()
-      //.master("local[*]")
+      .master("local[*]")
       .appName("Spark ADT")
       .getOrCreate()
 

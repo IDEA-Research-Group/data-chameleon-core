@@ -1,5 +1,6 @@
 package es.us.idea.adt.data.chameleon.data
 
-class DataType {
+abstract class DataType {
 
+  override def toString: String
 }

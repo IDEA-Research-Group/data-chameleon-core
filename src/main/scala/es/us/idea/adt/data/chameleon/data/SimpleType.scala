@@ -1,5 +1,5 @@
 package es.us.idea.adt.data.chameleon.data
 
-class SimpleType {
+abstract class SimpleType extends DataType {
 
 }
