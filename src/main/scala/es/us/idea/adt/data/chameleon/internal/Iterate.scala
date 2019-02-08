@@ -1,8 +1,11 @@
 package es.us.idea.adt.data.chameleon
 import es.us.idea.adt.data.chameleon.data.DataType
 import es.us.idea.adt.data.chameleon.data.complex.ArrayType
+import es.us.idea.adt.data.chameleon.internal.Evaluable
 
 class Iterate(toIterate: Evaluable, operation: Evaluable) extends Evaluable {
+
+  override var dataType: Option[DataType] = None
 
   override def getValue(in: Any): Any = {
     def matchValue: Any => Any = (a: Any) => {
@@ -19,12 +22,14 @@ class Iterate(toIterate: Evaluable, operation: Evaluable) extends Evaluable {
     matchValue(valueToIterate)
   }
 
-  override def getDataType(dataType: DataType): DataType = {
-
-    toIterate.getDataType(dataType) match {
-      case at: ArrayType => new ArrayType(operation.getDataType(at.getElementDataType))
-      case _ => throw new Exception("Iterable must be applied on an array")
-    }
+  override def evaluate(parentDataType: DataType): DataType = {
+    val dt =
+      toIterate.evaluate(parentDataType) match {
+        case at: ArrayType => new ArrayType(operation.evaluate(at.getElementDataType))
+        case _ => throw new Exception("Iterable must be applied on an array")
+      }
+    this.dataType = Some(dt)
+    dt
   }
 
 }
