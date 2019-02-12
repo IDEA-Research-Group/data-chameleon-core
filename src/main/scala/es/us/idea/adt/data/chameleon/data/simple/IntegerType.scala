@@ -2,7 +2,12 @@ package es.us.idea.adt.data.chameleon.data.simple
 
 import es.us.idea.adt.data.chameleon.data.SimpleType
 
+import scala.math.Ordering
+
 class IntegerType extends SimpleType{
+
+  type InternalType = Integer
+
   override def toString: String = "Integer"
 
   override def equals(that: Any): Boolean = {
@@ -15,5 +20,7 @@ class IntegerType extends SimpleType{
   override def hashCode(): Int = {
     this.getClass.hashCode()
   }
+
+  override def getOrdering: Ordering[InternalType] = implicitly[Ordering[InternalType]]
 
 }

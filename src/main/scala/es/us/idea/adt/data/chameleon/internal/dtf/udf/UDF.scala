@@ -1,20 +1,21 @@
-package es.us.idea.adt.data.chameleon.internal
+package es.us.idea.adt.data.chameleon.internal.dtf.udf
 
-import es.us.idea.adt.data.chameleon.Operator
 import es.us.idea.adt.data.chameleon.data.DataType
+import es.us.idea.adt.data.chameleon.internal.Evaluable
 
-case class DTF(f: AnyRef, dataType: Option[DataType], calculateDT: Option[DataType => DataType]) {
+case class UDF(f: AnyRef, dataType: DataType) {
 
   // Para permitir pasar los argumentos directamente a la DTF
   def apply(evals: Evaluable*): Evaluable = {
-    if(evals.size > 0){
-      if(evals.size > 1) new NAryOperator(evals, new DTF(f, dataType, calculateDT))
-      else new UnaryOperator(evals.head, new DTF(f, dataType, calculateDT))
-    } else throw new Exception("Nullary operator has not been implemented yet")
+
+    new UDFOperator(evals, new UDF(f, dataType))
+    // Tengo que tener uno unario y otro N-Ario
+    //if(evals.size > 0){
+    //  else new UnaryUDFOperator(evals.head, new UDF(f, dataType))
+    //} else throw new Exception("Nullary operator has not been implemented yet")
   }
 
   def evaluate(value: Any*): Any = {
-
 
     // TODO: Tratar los valores nulos. Introducir un parámetro que indique el criterio de qué hacer en caso de que haya un valor nulo
     def getRawValue(v: Any): Any = {
@@ -40,6 +41,9 @@ case class DTF(f: AnyRef, dataType: Option[DataType], calculateDT: Option[DataTy
 
   }
 
+  def getDataType = dataType
+
+
   //https://stackoverflow.com/questions/30403120/scala-pattern-matching-on-different-type-of-seq
   // It does not work
   //def evaluate() = {
@@ -60,30 +64,23 @@ case class DTF(f: AnyRef, dataType: Option[DataType], calculateDT: Option[DataTy
 
   // n-ary
 
-  def getDataType(dt: DataType): DataType = {
-    dataType match {
-      case Some(x) => x
-      case _ => calculateDT match {
-        case Some(funct) => funct(dt)
-        case _ => dt
-      }
-    }
-  }
+  //def getDataType(dt: DataType): DataType = {
+  //  dataType match {
+  //    case Some(x) => x
+  //    case _ => calculateDT match {
+  //      case Some(funct) => funct(dt)
+  //      case _ => dt
+  //    }
+  //  }
+  //}
 
-  // Nullary
-  //def evaluate(): DataType = {
+  //// Nullary
+  //def getDataType(): DataType = {
   //  dataType match {
   //    case Some(x) => x
   //    case _ => throw new Exception("DataType must be specified in nullary operators")
   //  }
   //}
-  // Nullary
-  def getDataType(): DataType = {
-    dataType match {
-      case Some(x) => x
-      case _ => throw new Exception("DataType must be specified in nullary operators")
-    }
-  }
 
 }
 
@@ -92,7 +89,7 @@ case class DTF(f: AnyRef, dataType: Option[DataType], calculateDT: Option[DataTy
   */
 object DTF {
 
-  def apply(f: AnyRef, dataType: DataType) = new DTF(f, Some(dataType), None)
-  def apply(f: AnyRef, calculateDT: DataType => DataType) = new DTF(f, None, Some(calculateDT))
+  def apply(f: AnyRef, dataType: DataType) = new UDF(f, dataType)
+  //def apply(f: AnyRef, calculateDT: DataType => DataType) = new UDF(f, None, Some(calculateDT))
 
 }

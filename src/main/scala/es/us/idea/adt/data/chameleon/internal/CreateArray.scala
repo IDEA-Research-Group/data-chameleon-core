@@ -2,9 +2,9 @@ package es.us.idea.adt.data.chameleon
 
 import es.us.idea.adt.data.chameleon.data.DataType
 import es.us.idea.adt.data.chameleon.data.complex.ArrayType
-import es.us.idea.adt.data.chameleon.internal.Evaluable
+import es.us.idea.adt.data.chameleon.internal.{ArrayEvaluable, Evaluable}
 
-class CreateArray(evals: Seq[Evaluable]) extends Evaluable {
+class CreateArray(evals: Seq[Evaluable]) extends ArrayEvaluable {
 
   override var dataType: Option[DataType] = None
 
