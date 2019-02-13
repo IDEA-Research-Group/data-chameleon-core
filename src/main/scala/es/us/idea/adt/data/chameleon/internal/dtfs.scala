@@ -47,6 +47,8 @@ object dtfs {
   //def avg(evals: Evaluable*): Avg = new Avg(new CreateArray(evals))
   def avg(eval: Evaluable): Avg = new Avg(eval)
 
+  def count(eval: Evaluable): Count = new Count(eval)
+
   def filter(eval: Evaluable, predicate: Predicate) = new Filter(eval, predicate)
 
   def equal(eval: Evaluable, value: Any) = new Equal(eval, value)
