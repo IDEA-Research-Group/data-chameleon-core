@@ -11,15 +11,29 @@ abstract class ArithmeticAggregationDTF(eval: Evaluable) extends AbstractAggrega
       case t: Traversable[Any] =>
         getDataType match {
           case st: SimpleType => {
-
-            val result =
-              t.foldLeft[Any](getInitialValue)((acc, element) => {
-                val ensuredElement = utils.ensureDataType(element, getDataType)
-                if(ensuredElement == None || acc == None) None
-                else operation(acc, ensuredElement)
+            val aggregationResult =
+              t.foldLeft[Option[Double]](Some(getInitialValue))((acc, element) => {
+                //val ensuredElement = utils.ensureDataType(element, getDataType)
+                if(acc != None) {
+                  val a = utils.ensureNumber(acc)
+                  val b = utils.ensureNumber(element)
+                  a match {
+                    case Some(n: Double) => b match {
+                      case Some(m: Double) => Some(operation(n, m))
+                      case _ => None
+                    }
+                    case _ => None
+                  }
+                } else None
               })
 
-            finalResult(t, result)
+            val result =
+              aggregationResult match {
+                case Some(d: Double) => finalResult(t, d)
+                case _ => None
+              }
+
+            utils.ensureDataType(result, getDataType)
 
           }
           case _ => None
@@ -28,8 +42,8 @@ abstract class ArithmeticAggregationDTF(eval: Evaluable) extends AbstractAggrega
     }
   }
 
-  def getInitialValue: Any
-  def operation(a: Any, b: Any): Any
-  def finalResult(t: Traversable[Any], result: Any): Any
+  def getInitialValue: Double
+  def operation(a: Double, b: Double): Double
+  def finalResult(t: Traversable[Any], result: Double): Double
 
 }

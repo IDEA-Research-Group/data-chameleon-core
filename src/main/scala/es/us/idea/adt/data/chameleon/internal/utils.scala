@@ -12,6 +12,7 @@ object utils {
   def unwrap(a: Any): Any = {
     a match {
       case Some(x) => x
+      case null => None
       case _ => a
     }
   }
@@ -33,6 +34,8 @@ object utils {
       }
     castValue.getOrElse(None)
   }
+
+  def ensureNumber(a: Any): Option[Double] = TypeConversions.asDouble(unwrap(a))
 
   /**
     * Type conversions
