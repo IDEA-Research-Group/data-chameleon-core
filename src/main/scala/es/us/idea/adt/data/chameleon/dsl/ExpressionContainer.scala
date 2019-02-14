@@ -9,7 +9,7 @@ abstract class ExpressionContainer {
 
   def filter(predicate: Predicate): FilterContainer = new FilterContainer(this, predicate)
 
-  def transform(f: (Evaluable => DTFOperator)) = f.apply(this.build())
+  def ->(f: (Evaluable => DTFOperator)) = f.apply(this.build())
 
   def <(value: Any) = new LessThan(this.build(), value)
   def <=(value: Any) = new LessEqualThan(this.build(), value)

@@ -2,7 +2,7 @@ package es.us.idea.adt.data.chameleon.internal
 
 import es.us.idea.adt.data.chameleon.data.DataType
 
-trait Evaluable {
+trait Evaluable extends Serializable {
 
   var dataType: Option[DataType]
 

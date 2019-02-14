@@ -1,7 +1,7 @@
-package es.us.idea.adt.data.chameleon
+package es.us.idea.adt.data.chameleon.spark.conversor
 
-import es.us.idea.adt.data.chameleon.data.{DataType, SimpleType}
 import es.us.idea.adt.data.chameleon.data.complex.{ArrayType, StructType}
+import es.us.idea.adt.data.chameleon.data.{DataType, SimpleType}
 import es.us.idea.adt.data.chameleon.internal.utils
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
@@ -48,7 +48,7 @@ object SparkDataConversor {
             case map: Map[String, Any] =>
               Row.apply(structType.getAttributes.map( a => {
                 format(utils.unwrap(map.get(a.getName)), a.getDataType)
-              }))
+              }): _*)
             case _ => None
           }
         case arrayType: ArrayType =>
