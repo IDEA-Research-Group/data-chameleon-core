@@ -7,6 +7,8 @@ import es.us.idea.adt.data.chameleon.data.simple.{DoubleType, FloatType, Integer
 import es.us.idea.adt.data.chameleon.internal.dtf.aggregation._
 import es.us.idea.adt.data.chameleon.internal.dtf.filter.Filter
 import es.us.idea.adt.data.chameleon.internal.dtf.filter.predicates._
+import es.us.idea.adt.data.chameleon.internal.dtf.order.OrderBy
+import es.us.idea.adt.data.chameleon.internal.dtf.transformation._
 import es.us.idea.adt.data.chameleon.internal.dtf.udf.UDF
 
 object dtfs {
@@ -60,6 +62,16 @@ object dtfs {
   def not(predicate: Predicate) = new Not(predicate)
   def and(predicate: Predicate*) = new And(predicate: _*)
   def or(predicate: Predicate*) = new Or(predicate: _*)
+
+  def toInt(eval: Evaluable) = new ToInt(eval)
+  def toDouble(eval: Evaluable) = new ToDouble(eval)
+  def toFloat(eval: Evaluable) = new ToFloat(eval)
+  def toLong(eval: Evaluable) = new ToLong(eval)
+  def toString(eval: Evaluable) = new ToString(eval)
+  def toDate(format: String)(eval: Evaluable) = new ToDate(eval, format)
+
+  def orderBy(criteria: Evaluable, ascending: Boolean)(arrayEvaluable: Evaluable) = new OrderBy(arrayEvaluable, criteria, ascending)
+  def orderBy(criteria: Evaluable)(arrayEvaluable: Evaluable) = new OrderBy(arrayEvaluable, criteria)
 
   //def max = DTF((seq: Seq[Any]) => {
   //  // todo especificar criterio de ordenacion
