@@ -9,8 +9,6 @@ class Index(index: Int) extends Evaluable {
 
   override def getValue(in: Any): Any = {
     in match {
-      case arr: Array[Any] => arr.lift(index)
-      case list: List[Any] => list.lift(index)
       case seq: Seq[Any] => seq.lift(index)
       case Some(a) => getValue(a)
       case _ => None

@@ -13,22 +13,6 @@ import es.us.idea.adt.data.chameleon.internal.dtf.udf.UDF
 
 object dtfs {
 
-  private def scaleFunction(i: Int)(n: Any): Option[Any] = {
-    n match {
-      case Some(x) => scaleFunction(i)(n)
-      case int: Int => Some(int * i)
-      case double: Double => Some(double * i)
-      case float: Float => Some(float * i)
-      case long: Long => Some(long * i)
-      case _ => None
-    }
-  }
-
-  def scale(i: Int) = UDF((n: Any) =>{
-    scaleFunction(i)(n)
-
-  }, new IntegerType())
-
   // TODO mucho ojo, he definido como ArrayEvaluable Iterate y CreateArray. Sin embargo, Select también puede entrar en esta
   // categoría. Tenerlo en cuenta y considerar dejar solo una posible definición de esta función que reciba solo un objeto Evaluable
   //def max(evals: Evaluable*): Max = new Max(new CreateArray(evals))
@@ -72,20 +56,5 @@ object dtfs {
 
   def orderBy(criteria: Evaluable, ascending: Boolean)(arrayEvaluable: Evaluable) = new OrderBy(arrayEvaluable, criteria, ascending)
   def orderBy(criteria: Evaluable)(arrayEvaluable: Evaluable) = new OrderBy(arrayEvaluable, criteria)
-
-  //def max = DTF((seq: Seq[Any]) => {
-  //  // todo especificar criterio de ordenacion
-  //  seq.max
-  //}, (dt: DataType) => {
-  //  dt match {
-  //    case dt: ArrayType => dt.getElementDataType
-  //    case _ => throw new Exception("max DTF must be applied to a list")
-  //  }
-  //})
-
-
-
-
-
 
 }

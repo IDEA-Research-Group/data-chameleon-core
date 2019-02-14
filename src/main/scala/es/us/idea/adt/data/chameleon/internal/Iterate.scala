@@ -1,18 +1,16 @@
 package es.us.idea.adt.data.chameleon
 import es.us.idea.adt.data.chameleon.data.DataType
 import es.us.idea.adt.data.chameleon.data.complex.ArrayType
-import es.us.idea.adt.data.chameleon.internal.{ArrayEvaluable, Evaluable}
+import es.us.idea.adt.data.chameleon.internal.Evaluable
 
-class Iterate(toIterate: Evaluable, operation: Evaluable) extends ArrayEvaluable {
+class Iterate(toIterate: Evaluable, operation: Evaluable) extends Evaluable {
 
   override var dataType: Option[DataType] = None
 
   override def getValue(in: Any): Any = {
     def matchValue: Any => Any = (a: Any) => {
       a match {
-        case t: Traversable[_] => t.map(element => operation.getValue(element))
-        //case list: List[Any] => list.map(element => operation.getValue(element))
-        //case seq: Seq[Any] => seq.map(element => operation.getValue(element))
+        case s: Seq[_] => s.map(element => operation.getValue(element))
         case Some(any) => matchValue(any)
         case _ => None //throw new Exception("Iterable must be applied on an array")
       }

@@ -6,7 +6,7 @@ import es.us.idea.adt.data.chameleon.data.simple._
 import org.apache.spark
 import org.apache.spark.sql.types.DataTypes
 
-class SparkTypeConversor {
+object SparkTypeConversor {
 
   //val equivalences = Map(
   //  Struct ->

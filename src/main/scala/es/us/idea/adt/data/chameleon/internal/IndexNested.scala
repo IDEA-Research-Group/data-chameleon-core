@@ -10,8 +10,6 @@ class IndexNested(index: Int, eval: Evaluable) extends Evaluable {
 
   override def getValue(in: Any): Any = {
     in match {
-      case arr: Array[Any] => eval.getValue(arr.lift(index))
-      case list: List[Any] => eval.getValue(list.lift(index))
       case seq: Seq[Any] => eval.getValue(seq.lift(index))
       case Some(a) => getValue(a)
       case _ => None
