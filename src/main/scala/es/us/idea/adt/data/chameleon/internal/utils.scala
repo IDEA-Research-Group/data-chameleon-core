@@ -28,7 +28,12 @@ object utils {
         case _: LongType => TypeConversions.asLong(unwraped)
         case _: FloatType => TypeConversions.asFloat(unwraped)
         case _: StringType => TypeConversions.asString(unwraped)
-        case _: DateType => throw new Exception("DateType conversion not implemented yet")
+        case _: DateType => {
+          unwraped match {
+            case date: java.sql.Date => Some(date)
+            case _ => throw new Exception("DateType conversion not implemented yet")
+          }
+        }
         case _: BooleanType => throw new Exception("BooleanType conversion not implemented yet")
         case other => throw new Exception(s"Unknown data type $other")
       }
