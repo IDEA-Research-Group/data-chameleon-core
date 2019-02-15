@@ -10,6 +10,11 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % sparkVersion % "prov
 libraryDependencies += "org.apache.spark" %% "spark-sql" % sparkVersion % "provided "
 libraryDependencies += "org.mongodb.spark" %% "mongo-spark-connector" % "2.3.1" % "compile"
 libraryDependencies += "joda-time" % "joda-time" % "2.10" % "compile"
+// https://mvnrepository.com/artifact/com.google.code.gson/gson
+libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5"
+// https://mvnrepository.com/artifact/org.kitesdk/kite-data-core
+libraryDependencies += "org.kitesdk" % "kite-data-core" % "1.1.0"
+
 
 assemblyMergeStrategy in assembly := {
   case PathList("org","aopalliance", xs @ _*) => MergeStrategy.last
