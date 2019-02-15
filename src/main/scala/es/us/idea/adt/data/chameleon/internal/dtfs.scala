@@ -7,6 +7,7 @@ import es.us.idea.adt.data.chameleon.data.simple.{DoubleType, FloatType, Integer
 import es.us.idea.adt.data.chameleon.internal.dtf.aggregation._
 import es.us.idea.adt.data.chameleon.internal.dtf.filter.Filter
 import es.us.idea.adt.data.chameleon.internal.dtf.filter.predicates._
+import es.us.idea.adt.data.chameleon.internal.dtf.group.GroupBy
 import es.us.idea.adt.data.chameleon.internal.dtf.order.OrderBy
 import es.us.idea.adt.data.chameleon.internal.dtf.transformation._
 import es.us.idea.adt.data.chameleon.internal.dtf.udf.UDF
@@ -56,5 +57,9 @@ object dtfs {
 
   def orderBy(criteria: Evaluable, ascending: Boolean)(arrayEvaluable: Evaluable) = new OrderBy(arrayEvaluable, criteria, ascending)
   def orderBy(criteria: Evaluable)(arrayEvaluable: Evaluable) = new OrderBy(arrayEvaluable, criteria)
+
+  def groupBy(key: Evaluable)(eval: Evaluable) = new GroupBy(eval, key)
+  def groupBy(key: Evaluable, operation: Evaluable)(eval: Evaluable) = new GroupBy(eval, key, Some(operation))
+
 
 }
