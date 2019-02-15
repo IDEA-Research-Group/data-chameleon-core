@@ -49,7 +49,11 @@ object Main {
             array(t"contractedPower.period1", t"contractedPower.period4") -> max,
             array(t"contractedPower.period2", t"contractedPower.period5") -> max,
             array(t"contractedPower.period3", t"contractedPower.period6") -> max
-          ) iterate t"." -> toInt)
+          ) iterate t"." -> toInt),
+          "Group" << (t"consumption" -> groupBy(t"power.period1", t"." -> count) iterate struct(
+            "potencia1" << t"__key",
+            "count" << t"result"
+          ))
         )
 
     //val ds = spark.read.json(datasetPath)

@@ -6,8 +6,8 @@ scalaVersion := "2.11.8"
 
 val sparkVersion = "2.3.1"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % sparkVersion % "provided"
-libraryDependencies += "org.apache.spark" %% "spark-sql" % sparkVersion % "provided "
+libraryDependencies += "org.apache.spark" %% "spark-core" % sparkVersion % "compile"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % sparkVersion % "compile "
 libraryDependencies += "org.mongodb.spark" %% "mongo-spark-connector" % "2.3.1" % "compile"
 libraryDependencies += "joda-time" % "joda-time" % "2.10" % "compile"
 // https://mvnrepository.com/artifact/com.google.code.gson/gson
