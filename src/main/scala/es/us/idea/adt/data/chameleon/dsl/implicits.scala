@@ -1,7 +1,6 @@
 package es.us.idea.adt.data.chameleon.dsl
 
 import es.us.idea.adt.data.chameleon.internal.Evaluable
-import es.us.idea.adt.data.chameleon.internal.dtf.DTFOperator
 
 object implicits {
 
@@ -10,7 +9,7 @@ object implicits {
     * @param name
     */
   implicit class StringToAttributeNameContainer(val name: String) {
-    def << (expressionContainer: ExpressionContainer) = new RenameContainer(name, expressionContainer)
+    def << (expressionContainer: ExpressionContainer) = new CreateAttributeContainer(name, expressionContainer)
   }
 
   /**
@@ -24,7 +23,7 @@ object implicits {
   def t(str: String) = new SelectContainer(str)
 
   def array(expressionContainers: ExpressionContainer*) = new ArrayContainer(expressionContainers)
-  def struct(renameContainers: RenameContainer*) = new StructContainer(renameContainers)
+  def struct(createAttributeContainers: CreateAttributeContainer*) = new StructContainer(createAttributeContainers)
 
 
   ///**

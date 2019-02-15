@@ -2,7 +2,7 @@ package es.us.idea.adt.data.chameleon
 import es.us.idea.adt.data.chameleon.data.{Attribute, DataType}
 import es.us.idea.adt.data.chameleon.internal.Evaluable
 
-class Rename(name: String, eval: Evaluable) extends Evaluable {
+class CreateAttribute(name: String, eval: Evaluable) extends Evaluable {
 
   override var dataType: Option[DataType] = None
 

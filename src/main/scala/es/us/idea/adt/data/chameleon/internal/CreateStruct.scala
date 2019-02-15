@@ -3,7 +3,7 @@ import es.us.idea.adt.data.chameleon.data.{Attribute, DataType}
 import es.us.idea.adt.data.chameleon.data.complex.StructType
 import es.us.idea.adt.data.chameleon.internal.Evaluable
 
-class CreateStruct(attrs: Seq[Rename]) extends Evaluable {
+class CreateStruct(attrs: Seq[CreateAttribute]) extends Evaluable {
 
   override var dataType: Option[DataType] = None
 

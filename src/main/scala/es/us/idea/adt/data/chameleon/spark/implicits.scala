@@ -1,7 +1,7 @@
 package es.us.idea.adt.data.chameleon.spark
 
-import es.us.idea.adt.data.chameleon.{CreateStruct, Rename}
-import es.us.idea.adt.data.chameleon.dsl.RenameContainer
+import es.us.idea.adt.data.chameleon.{CreateStruct, CreateAttribute}
+import es.us.idea.adt.data.chameleon.dsl.CreateAttributeContainer
 import es.us.idea.adt.data.chameleon.spark.conversor.{SparkDataConversor, SparkTypeConversor}
 import org.apache.spark.sql.functions.{array, explode, struct, udf, col}
 import org.apache.spark.sql.{DataFrame, Row}
@@ -15,15 +15,15 @@ object implicits {
     *
     * */
   implicit class ChameleonImplicit(df: DataFrame) {
-    def chameleon(rc: RenameContainer*): DataFrame = {
+    def chameleon(rc: CreateAttributeContainer*): DataFrame = {
       transformDataFrame(df, rc.map(t => t.build() match {
-        case r: Rename => r
+        case r: CreateAttribute => r
         case _ => throw new Exception("chameleon method must receive rename evaluable objects")
       }): _*)
     }
   }
 
-  private def transformDataFrame(df: DataFrame, dt: Rename*): DataFrame = {
+  private def transformDataFrame(df: DataFrame, dt: CreateAttribute*): DataFrame = {
     // The temporal column name is identified with the hexadecimal timestamp
     val tempColumn = s"__${System.currentTimeMillis().toHexString}"
 
