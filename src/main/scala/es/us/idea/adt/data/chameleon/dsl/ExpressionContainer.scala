@@ -11,6 +11,9 @@ abstract class ExpressionContainer {
 
   def ->(f: (Evaluable => DTFOperator)) = f.apply(this.build())
 
+  // If this operator receives a String, it will rename the current expression
+  //def ~(newName: String) = new Rename(newName, this.build())
+
   def <(value: Any) = new LessThan(this.build(), value)
   def <=(value: Any) = new LessEqualThan(this.build(), value)
   def >(value: Any) = new GreaterThan(this.build(), value)
