@@ -50,7 +50,7 @@ class GroupBy(evaluable: Evaluable, key: Evaluable, operation: Option[Evaluable]
                   new Attribute("result",
                     operation match {
                       case Some(op) => op.evaluate(evaluable.getDataType)
-                      case _ => structType
+                      case _ => new ArrayType(structType)
                     }
                   )
                 )
