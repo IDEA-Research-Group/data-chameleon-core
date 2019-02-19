@@ -14,6 +14,8 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10" % "compile"
 libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5"
 // https://mvnrepository.com/artifact/org.kitesdk/kite-data-core
 libraryDependencies += "org.kitesdk" % "kite-data-core" % "1.1.0"
+// https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml
+libraryDependencies += "com.fasterxml.jackson.dataformat" % "jackson-dataformat-xml" % "2.9.8"
 
 
 assemblyMergeStrategy in assembly := {

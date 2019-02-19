@@ -11,7 +11,7 @@ object utils {
 
   def unwrap(a: Any): Any = {
     a match {
-      case Some(x) => x
+      case Some(x) => unwrap(x)
       case null => None
       case _ => a
     }
