@@ -19,7 +19,7 @@ class ToDate(eval: Evaluable, format: String) extends DTFOperator {
       }
       case _ => None
     }
-    process(utils.unwrap(eval.getValue(in)))
+    process(utils.unwrap(eval.getValue(utils.unwrap(in))))
   }
 
   override def evaluate(parentDataType: DataType): DataType = {
