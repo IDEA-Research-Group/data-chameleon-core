@@ -26,4 +26,6 @@ class IndexNested(index: Int, eval: Evaluable) extends Evaluable {
     dt
   }
 
+  override def toString(): String = s"IndexNested($index, ${eval.toString})"
+
 }

@@ -16,7 +16,7 @@ abstract class AbstractAggregationDTF(eval: Evaluable) extends DTFOperator{
           val et = at.getElementDataType
           et match {
             case _: SimpleType => et
-            case other => throw new Exception(s"Aggregation DTF must be applied to ArrayType of SimpleType. Instead, it has been applied to $other")
+            case other => other //throw new Exception(s"Aggregation DTF must be applied to ArrayType of SimpleType. Instead, it has been applied to $other")
           }
         }
         case _ => throw new Exception("Aggregation DTF must be applied to ArrayType")

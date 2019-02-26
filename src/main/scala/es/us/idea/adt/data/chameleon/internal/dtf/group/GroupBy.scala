@@ -86,4 +86,12 @@ class GroupBy(evaluable: Evaluable, key: Evaluable, operation: Option[Evaluable]
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = {
+    operation match {
+      case Some(x) => s"GroupBy(${evaluable.toString}, ${key.toString}, ${x.toString})"
+      case _ => s"GroupBy(${evaluable.toString}, ${key.toString})"
+    }
+  }
+
 }

@@ -25,4 +25,6 @@ class Index(index: Int) extends Evaluable {
     dt
   }
 
+  override def toString(): String = s"Index($index)"
+
 }

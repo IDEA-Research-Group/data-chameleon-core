@@ -15,4 +15,6 @@ class CreateAttribute(name: String, eval: Evaluable) extends Evaluable {
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"CreateAttribute($name, ${eval.toString})"
 }

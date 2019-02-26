@@ -51,5 +51,6 @@ class OrderBy(arrayevaluable: Evaluable, criteria: Evaluable, ascending: Boolean
     dt
   }
 
+  override def toString(): String = s"OrderBy(${arrayevaluable.toString}, ${criteria.toString}, $ascending)"
 
 }

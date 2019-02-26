@@ -19,4 +19,6 @@ class CreateStruct(attrs: Seq[CreateAttribute]) extends Evaluable {
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"CreateStruct(${attrs.map(_.toString).mkString(", ")})"
 }

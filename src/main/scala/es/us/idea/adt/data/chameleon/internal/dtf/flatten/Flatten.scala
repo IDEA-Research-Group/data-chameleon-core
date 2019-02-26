@@ -22,14 +22,18 @@ class Flatten(evaluable: Evaluable) extends DTFOperator {
   }
 
   override def evaluate(parentDataType: DataType): DataType = {
-
-    evaluable.evaluate(parentDataType) match {
-      case arrayType: ArrayType => arrayType.getElementDataType match {
-        case nestedArrayType: ArrayType => new ArrayType(nestedArrayType.getElementDataType)
+    val dt =
+      evaluable.evaluate(parentDataType) match {
+        case arrayType: ArrayType => arrayType.getElementDataType match {
+          case nestedArrayType: ArrayType => new ArrayType(nestedArrayType.getElementDataType)
+          case other => throw new Exception(s"Flatten DTF requires ArrayType(ArrayType(...)). Instead, it was $other")
+        }
         case other => throw new Exception(s"Flatten DTF requires ArrayType(ArrayType(...)). Instead, it was $other")
       }
-      case other => throw new Exception(s"Flatten DTF requires ArrayType(ArrayType(...)). Instead, it was $other")
-    }
-
+    this.dataType = Some(dt)
+    dt
   }
+
+  override def toString(): String = s"Flatten(${evaluable.toString})"
+
 }
