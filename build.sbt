@@ -6,6 +6,8 @@ scalaVersion := "2.11.8"
 
 val sparkVersion = "2.3.1"
 
+//val url = url("http://estigia.lsi.us.es:1681/artifactory/libs-release")
+
 libraryDependencies += "org.apache.spark" %% "spark-core" % sparkVersion % "compile"
 libraryDependencies += "org.apache.spark" %% "spark-sql" % sparkVersion % "compile "
 libraryDependencies += "org.mongodb.spark" %% "mongo-spark-connector" % "2.3.1" % "compile"
@@ -16,7 +18,13 @@ libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5"
 libraryDependencies += "org.kitesdk" % "kite-data-core" % "1.1.0"
 // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml
 libraryDependencies += "com.fasterxml.jackson.dataformat" % "jackson-dataformat-xml" % "2.9.8"
+libraryDependencies += "javax.xml.bind" % "jaxb-api" % "2.2.6"
+libraryDependencies += "Spex" % "Spex" % "1" from "http://estigia.lsi.us.es:1681/artifactory/libs-release/Spex/Spex/1/Spex-1.jar"
+libraryDependencies += "OpenXES" % "OpenXES" % "20160212" from "http://estigia.lsi.us.es:1681/artifactory/libs-release/OpenXES/OpenXES/20160212/OpenXES-20160212.jar"
 
+
+//resolvers += Resolver.url("Artifactory-releases", url("http://estigia.lsi.us.es:1681/artifactory/libs-release"))(Resolver.ivyStylePatterns)
+//resolvers += "Artifactory-releases" at "http://estigia.lsi.us.es:1681/artifactory/libs-release"
 
 assemblyMergeStrategy in assembly := {
   case PathList("org","aopalliance", xs @ _*) => MergeStrategy.last

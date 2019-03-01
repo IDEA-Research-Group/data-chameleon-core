@@ -1,5 +1,9 @@
 package es.us.idea.adt.data.chameleon.xes.dsl
 
+import java.io.File
+import java.nio.file.Files
+
+import com.fasterxml.jackson.databind.ObjectMapper
 import es.us.idea.adt.data.chameleon._
 import es.us.idea.adt.data.chameleon.data.{Attribute, DataType, SimpleType}
 import es.us.idea.adt.data.chameleon.data.complex.{ArrayType, StructType}
@@ -11,6 +15,8 @@ import es.us.idea.adt.data.chameleon.internal.dtf.filter.Filter
 import es.us.idea.adt.data.chameleon.internal.dtf.filter.predicates.GreaterThan
 import es.us.idea.adt.data.chameleon.internal.dtf.flatten.Flatten
 import es.us.idea.adt.data.chameleon.internal.dtf.group.GroupBy
+import es.us.idea.adt.data.chameleon.json.conversor.{JsonDataConversor, JsonTypeConversor}
+import org.kitesdk.data.spi.JsonUtil
 
 object implicits {
 
@@ -31,7 +37,7 @@ object implicits {
 
   case class event(
                     activity: String,
-                    filter: Eval2DTF,
+                    criteria: Eval2DTF,
                     timestamp: ExpressionContainer,
                     resource: Option[ExpressionContainer] = None,
                     transactionType: Option[ExpressionContainer] = None,
@@ -94,7 +100,7 @@ object implicits {
                     //  case Some(x) => x.apply(new Select("result"))
                     //  case _ => new Select("result")
                     //}
-                    filter.apply(new Select("result"))
+                    criteria.apply(new Select("result"))
                   ))
                   //new CreateAttribute("result2", new SelectNested("start_date", new First(new Select("result"))))
                 ))
@@ -186,6 +192,40 @@ object implicits {
   //implicit class String2Field(str: String) {
   //}
 
+  /**
+    * Entry point
+    * */
+
+  case class transform(id: id, event: event) {
+    def over(jsonPath: String): Any = {
+      // Import java converters
+      import scala.collection.JavaConverters._
+      // Read File
+      val file = new File(jsonPath)
+      val fileLines = Files.readAllLines(file.toPath).asScala.toList
+
+      // From json documents to list
+      val jsonStr = "[" + fileLines.mkString(", ") + "]"
+
+      // Instantiate the mapper object and get the JSON tree
+      val mapper = new ObjectMapper()
+      val json = mapper.readTree(jsonStr)
+
+      // Infer  JSON Schema
+      val schema = JsonUtil.inferSchema(json,"root")
+
+      // Transform JSON schema to Chameleon schema
+      val chameleonSchema = JsonTypeConversor.json2chameleon(schema)
+      // Transform JSON Tree to chameleon data type
+      val data = JsonDataConversor.json2chameleon(json)
+
+      val idRes = id.interpret(data, chameleonSchema)
+      val eventRes = event.interpret(idRes._1, idRes._2)
+
+      eventRes._1
+
+    }
+  }
 
   /**
     * Utility functions
@@ -238,16 +278,16 @@ object implicits {
 
 
   def inferGroupBy(path: String, dataType: DataType): Evaluable = {
-    println(s"\n\nprinting datatype $dataType")
+    //println(s"\n\nprinting datatype $dataType")
     val fixedPath = if(path.charAt(0) != '.') "." + path else path
 
     val pathArr = fixedPath.split('.')
 
     val pathDTTuples = getPathDataTypeTuples(pathArr, dataType)
 
-    println("Imprimiendo pathDTTTuples")
-    println(pathDTTuples.mkString("\n"))
-    println("***")
+    //println("Imprimiendo pathDTTTuples")
+    //println(pathDTTuples.mkString("\n"))
+    //println("***")
 
     // AHora habria que analizar la lista
 
@@ -260,10 +300,10 @@ object implicits {
     val half1 = pathDTTuples.slice(0, index + 1)
     val half2 = pathDTTuples.slice(index + 1, pathDTTuples.length)
 
-    println("Imprimiendo half1")
-    println(half1.mkString("\n"))
-    println("Imprimiendo half2")
-    println(half2.mkString("\n"))
+    //println("Imprimiendo half1")
+    //println(half1.mkString("\n"))
+    //println("Imprimiendo half2")
+    //println(half2.mkString("\n"))
 
     //Crear el groupBy. El campo por el que agrupar, que es el segundo argumento de groupby, estará compuesto varios selectNested y un select normal, correspondiente al último
     // elemento de la lista.
@@ -276,13 +316,13 @@ object implicits {
     }
 
     def prepareArray(seq: Seq[(String, DataType)]): Evaluable = {
-      println("PrintingSequence\n" + seq.mkString("\n") + "\n***fin***")
+      //println("PrintingSequence\n" + seq.mkString("\n") + "\n***fin***")
       if(seq.length > 1) {
         val current = seq.head
         current._2 match {
           case arrayType: ArrayType => new Flatten(new Iterate(new Select(getStrOrNone(current._1)), prepareArray(seq.tail)))
           case structType: StructType => {
-            println(s"PrepareArray - ${current._1} - $structType")
+            //println(s"PrepareArray - ${current._1} - $structType")
             if(current._1.isEmpty) prepareArray(seq.tail)
             else new SelectNested(current._1, prepareArray(seq.tail))
           }
