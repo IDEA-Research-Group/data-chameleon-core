@@ -117,42 +117,4 @@ object XesDataConversor {
     baou.toString()
   }
 
-/*
-  def ejemploFuncionamiento() = {
-    val log = new XLogImpl(new XAttributeMapImpl())
-    (0 until 10).foreach(x => {
-
-      val xtrace = new XTraceImpl(new XAttributeMapImpl(Map[String, XAttribute](
-        "concept:name" -> new XAttributeLiteralImpl("concept:name", s"instance_$x")
-      ).asJava))
-
-      (0 until 20).foreach(y => {
-        val xevent = new XEventImpl(
-          new XAttributeMapImpl(
-            Map[String, XAttribute](
-              "time:timestamp" -> new XAttributeTimestampImpl("time:timestamp", System.currentTimeMillis()),
-              "concept:name" -> new XAttributeLiteralImpl("concept:name", y.toString)
-            ).asJava
-          )
-        )
-        xtrace.add(xevent)
-      })
-      log.add(xtrace)
-    })
-    val serializer = new XesXmlSerializer()
-    val baou = new ByteArrayOutputStream
-    serializer.serialize(log, baou)
-    println(log)
-    println(baou.toString())
-  }
-*/
-
-
-    //val xesFile: File = new File("datasets/ERP.xes")
-    //val xparser = new XesXmlParser
-    //val xLogList = xparser.parse(xesFile)
-    //println(xLogList.asScala.head)
-
-    //println("se fini")
-
 }

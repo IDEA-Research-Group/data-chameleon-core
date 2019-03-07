@@ -5,7 +5,7 @@ import java.nio.file.Files
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import es.us.idea.adt.data.chameleon._
-import es.us.idea.adt.data.chameleon.data.{Attribute, DataType, SimpleType}
+import es.us.idea.adt.data.chameleon.data.{DataType, SimpleType}
 import es.us.idea.adt.data.chameleon.data.complex.{ArrayType, StructType}
 import es.us.idea.adt.data.chameleon.dsl.ExpressionContainer
 import es.us.idea.adt.data.chameleon.internal.Evaluable
@@ -196,8 +196,8 @@ object implicits {
     * Entry point
     * */
 
-  case class transform(id: id, event: event) {
-    def over(jsonPath: String): Any = {
+  case class extract(id: id, event: event) {
+    def from(jsonPath: String): Any = {
       // Import java converters
       import scala.collection.JavaConverters._
       // Read File
