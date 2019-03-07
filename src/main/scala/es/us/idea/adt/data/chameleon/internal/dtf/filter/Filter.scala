@@ -34,4 +34,7 @@ class Filter(eval: Evaluable, predicate: Predicate) extends DTFOperator {
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"Filter(${eval.toString}, ${predicate.toString})"
+
 }

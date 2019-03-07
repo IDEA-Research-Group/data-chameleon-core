@@ -15,4 +15,7 @@ class ToFloat(eval: Evaluable) extends DTFOperator {
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"ToFloat(${eval.toString})"
+
 }

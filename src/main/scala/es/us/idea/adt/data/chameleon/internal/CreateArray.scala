@@ -19,4 +19,7 @@ class CreateArray(evals: Seq[Evaluable]) extends Evaluable {
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"CreateArray(${evals.map(_.toString).mkString(", ")})"
+
 }

@@ -15,4 +15,7 @@ class ToInt(eval: Evaluable) extends DTFOperator {
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"ToInt(${eval.toString})"
+
 }

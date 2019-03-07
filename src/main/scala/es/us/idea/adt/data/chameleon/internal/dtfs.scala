@@ -56,8 +56,8 @@ object dtfs {
   def toString(eval: Evaluable) = new ToString(eval)
   def toDate(format: String)(eval: Evaluable) = new ToDate(eval, format)
 
-  def orderBy(criteria: Evaluable, ascending: Boolean)(arrayEvaluable: Evaluable) = new OrderBy(arrayEvaluable, criteria, ascending)
-  def orderBy(criteria: Evaluable)(arrayEvaluable: Evaluable) = new OrderBy(arrayEvaluable, criteria)
+  def orderBy(criteria: Evaluable, ascending: Boolean)(arrayEvaluable: Evaluable): OrderBy = new OrderBy(arrayEvaluable, criteria, ascending)
+  def orderBy(criteria: Evaluable)(arrayEvaluable: Evaluable): OrderBy = new OrderBy(arrayEvaluable, criteria)
 
   def groupBy(key: Evaluable)(eval: Evaluable) = new GroupBy(eval, key)
   def groupBy(key: Evaluable, operation: Evaluable)(eval: Evaluable) = new GroupBy(eval, key, Some(operation))

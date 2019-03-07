@@ -15,4 +15,7 @@ class ToDouble(eval: Evaluable) extends DTFOperator {
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"ToDouble(${eval.toString})"
+
 }

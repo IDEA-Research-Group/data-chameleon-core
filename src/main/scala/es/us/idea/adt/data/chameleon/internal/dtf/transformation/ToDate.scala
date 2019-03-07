@@ -27,4 +27,7 @@ class ToDate(eval: Evaluable, format: String) extends DTFOperator {
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"ToDate(${eval.toString}, $format)"
+
 }

@@ -24,10 +24,12 @@ class Iterate(toIterate: Evaluable, operation: Evaluable) extends Evaluable {
     val dt =
       toIterate.evaluate(parentDataType) match {
         case at: ArrayType => new ArrayType(operation.evaluate(at.getElementDataType))
-        case _ => throw new Exception("Iterable must be applied on an array")
+        case other => throw new Exception(s"Iterable must be applied on an array. It was applied to $other")
       }
     this.dataType = Some(dt)
     dt
   }
+
+  override def toString(): String = s"Iterate(${toIterate.toString}, ${operation.toString})"
 
 }

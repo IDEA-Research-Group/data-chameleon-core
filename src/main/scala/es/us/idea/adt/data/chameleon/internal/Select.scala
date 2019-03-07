@@ -34,7 +34,7 @@ class Select(name: Option[String]) extends Evaluable{
       case Some(s) => {
         parentDataType match {
           case struct: StructType => struct.findAttribute(s).getDataType
-          case _ => throw new Exception("Select operator must be applied on a Struct data type")
+          case other => throw new Exception(s"Select($name) operator must be applied on a Struct data type. Instead, it was applied to $other")
         }
       }
       case _ => parentDataType
@@ -42,6 +42,13 @@ class Select(name: Option[String]) extends Evaluable{
 
     this.dataType = Some(dt)
     dt
+  }
+
+  override def toString(): String = {
+    name match {
+      case Some(x) => s"Select($x)"
+      case _ => s"Select()"
+    }
   }
 
 }

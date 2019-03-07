@@ -26,4 +26,6 @@ class SelectNested(name: String, eval: Evaluable) extends Evaluable {
     dt
   }
 
+  override def toString(): String = s"SelectNested($name, ${eval.toString})"
+
 }
