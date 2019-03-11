@@ -73,7 +73,7 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-            <!-- Allows us to package fat jars -->
+            <!-- Allows us to package fat jars
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -112,7 +112,7 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
-            </plugin>
+            </plugin>-->
 
 
         </plugins>
