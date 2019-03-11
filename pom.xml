@@ -33,7 +33,7 @@
         <repository>
             <id>central</id>
             <name>Artifactory-releases</name>
-            <url>${env.ARTIFACTORY_URL}/libs-release</url>
+            <url>${env.ARTIFACTORY_URL}/libs-snapshot</url>
         </repository>
     </distributionManagement>
 
