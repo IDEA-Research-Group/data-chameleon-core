@@ -29,13 +29,13 @@
 
     </dependencies>
 
-    <repositories>
+    <distributionManagement>
         <repository>
             <id>central</id>
             <name>Artifactory-releases</name>
-            <url>http://estigia.lsi.us.es:1681/artifactory/libs-release</url>
+            <url>${env.ARTIFACTORY_URL}/libs-release-local</url>
         </repository>
-    </repositories>
+    </distributionManagement>
 
     <build>
         <plugins>
