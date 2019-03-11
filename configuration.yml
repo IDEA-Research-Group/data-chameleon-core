@@ -3,8 +3,8 @@ type: maven
 resolver:
   snapshotRepo: MAVEN_REPO_KEY
   releaseRepo: MAVEN_REPO_KEY
-  serverID: Default-Server
+  serverID: central
 deployer:
   snapshotRepo: MAVEN_REPO_KEY
   releaseRepo: MAVEN_REPO_KEY
-serverID: Default-Server
+serverID: central
