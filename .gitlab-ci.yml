@@ -1,4 +1,14 @@
 image: maven:3.6.0-jdk-8
+
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
 before_script:
   # Install JFrog CLI
   -  curl -fL https://getcli.jfrog.io | sh
@@ -9,6 +19,7 @@ before_script:
   - export M2_HOME=/usr/share/maven
   # Replace the repository name in the configuration.yml to the correct one.
   - sed -i 's,MAVEN_REPO_KEY,'"$MAVEN_REPO_KEY"',g' configuration.yml
+
 build:
   script:
     # Run the MVN command
