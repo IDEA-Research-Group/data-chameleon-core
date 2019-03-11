@@ -12,11 +12,11 @@ cache:
 build:
   stage: deploy
   script:
-    - mvn clean install -e -X
+    - mvn clean install -e -X --settings .m2/settings.xml
 
 deploy:
   stage: deploy
   script:
-    - mvn deploy -e -X
+    - mvn deploy -e -X --settings .m2/settings.xml
   only:
     - master
